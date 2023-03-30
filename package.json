@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "test_ys",
   "version": "1.0.0",
   "description": "",
@@ -11,4 +12,23 @@
   "dependencies": {
     "express": "^4.18.2"
   }
+=======
+  "name": "stackback",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jh-lee99/stackback.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jh-lee99/stackback/issues"
+  },
+  "homepage": "https://github.com/jh-lee99/stackback#readme"
+>>>>>>> a6dd089c5c65ff43eefe9055b2520fce9505db54
 }
