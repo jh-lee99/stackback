@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/jh-lee99/stackback/issues"
   },
-  "homepage": "https://github.com/jh-lee99/stackback#readme"
+  "homepage": "https://github.com/jh-lee99/stackback#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
