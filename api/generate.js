@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const configuration = new Configuration({
+  organization: "org-5wqEAjf3eFVxmogDQC9ZKNlB",
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
@@ -36,14 +37,25 @@ export default async function (req, res) {
     const prompt = startingPoint.trim().length === 0 ? 
     generateNoPathPrompt(destination) : generatePathPrompt(startingPoint, destination);
 
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: prompt,
+    const completion = await openai.createChatCompletion({
+      // model: "text-davinci-003",
+      // prompt: prompt,
+      model: "gpt-3.5-turbo",
+      messages : [
+        {
+          "role": "system",
+          "content": "You are an assistant who introduces information about travel destinations and recommended tourist destinations to users who are traveling through the period and place entered by the user."
+        },
+        {"role": "user", "content": "I will travel from Seoul to Tokyo for 3 days and 2 nights"}
+      ],
       temperature: 0.6,
       max_tokens: 2048,
     });
-    console.log(completion.data.choices[0].text);
-    res.json({ result: completion.data.choices[0].text });
+    // andwer 변수를 통해 response로 받은 content를 가져온다.
+    const answer = completion.data.choices[0].message.content;
+    console.log(answer);
+    // 클라이언트에게 전송한다.
+    res.json({ result: answer });
   } catch(error) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
