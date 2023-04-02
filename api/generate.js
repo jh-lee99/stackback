@@ -3,11 +3,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const configuration = new Configuration({
+  organization: "org-5wqEAjf3eFVxmogDQC9ZKNlB",
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-export default async function (req, res) {
+export default async function (req, res, dest, start) {
   if (!configuration.apiKey) {
     res.status(500).json({
       error: {
@@ -17,33 +18,29 @@ export default async function (req, res) {
     return;
   }
 
-  // 추후 아래의 코드를 사용하여 destination, startingPoint을 받아라.
-  /* 추후 아래의 조건문을 활용하여 startingPoint의 값이 비어있는 경우 
-    프롬프트에 값을 전달할 변수를 생성하고
-    generatePrompt와 같은 함수를 사용하여 키워드가 1개, 2개인 요청을 처리하라.
-  */
-  const { destination = '', startingPoint = '' } = req.body;
-  if (destination.trim().length === 0) {
-    res.status(400).json({
-      error: {
-        message: "Please enter a valid destination",
-      }
-    });
-    return;
-  }
-
   try {
-    const prompt = startingPoint.trim().length === 0 ? 
-    generateNoPathPrompt(destination) : generatePathPrompt(startingPoint, destination);
+    const prompt = start.trim().length === 0 ? 
+    generateNoPathPrompt(dest) : generatePathPrompt(start, dest);
 
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: prompt,
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages : [
+        {
+          "role": "system",
+          "content": `You are an assistant who introduces information 
+          about travel destinations and recommended tourist destinations to users 
+          who are traveling through the period and place entered by the user.`
+        },
+        {"role": "user", "content": prompt}
+      ],
       temperature: 0.6,
       max_tokens: 2048,
     });
-    console.log(completion.data.choices[0].text);
-    res.json({ result: completion.data.choices[0].text });
+    // answer 변수를 통해 response로 받은 content를 가져온다.
+    const answer = completion.data.choices[0].message.content;
+    console.log(answer);
+    return answer;
+    
   } catch(error) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
@@ -62,28 +59,36 @@ export default async function (req, res) {
 }
 
 // 키워드가 1개일 때 프롬포트를 생성하는 코드이다.
-function generateNoPathPrompt(destination) {
+function generateNoPathPrompt(dest) {
   // date 변수는 프론트엔드에서 달력 컴포넌트를 통해 사용자의 여행 기간을 받아 사용하는 매개변수다.
   const date = '2'; // 매개변수로 만들고 삭제하라.
   // 백팃 (` `) 안에 프롬포트를 집어넣어서 구현해라.
   /* 주의: ${} 안에 텍스트를 사용하는것이 아니다. */
+
+  // 나는 ${destination}로 ${date}일간의 여행을 갈거야.
+  // ${destination}에서 추천할만한 여행지가 있다면 추천해줘.
+  // 그리고 여행을 하면서 알면 좋을 다른것들도 추천해줬으면 좋겠어.
   return `
-    ${destination}에서의 ${date}일 동안의 여행 스케줄을 짜 줘\n\n
-    ${destination} 주변에 유명한 장소나 볼거리가 있다면 소개해줘}
+    I'm going on a ${date}-day trip to ${dest}.
+    If you have any travel destinations to recommend in ${dest}, please recommend them.
+    Also, please recommend other things to know while traveling.
   `;
 }
 
 // 추가로 키워드가 2개일 때 프롬포트를 생성하는 코드를 구현하라.
 // 키워드가 1개일 때 프롬포트를 생성하는 코드이다.
-function generatePathPrompt(destination, startingPoint) {
+function generatePathPrompt(dest, start) {
   // date 변수는 프론트엔드에서 달력 컴포넌트를 통해 사용자의 여행 기간을 받아 사용하는 매개변수다.
   const date = '2'; // 매개변수로 만들고 삭제하라.
   // 백팃 (` `) 안에 프롬포트를 집어넣어서 구현해라.
   /* 주의: ${} 안에 텍스트를 사용하는것이 아니다. */
+
+  // 나는 ${start}에서 출발해서 ${dest}로 ${date}일간의 여행을 갈거야.
+  // ${dest}에서 추천할만한 여행지가 있다면 추천해줘.
+  // 그리고 여행을 하면서 알면 좋을 다른것들도 추천해줬으면 좋겠어.
   return `
-    ${startingPoint}에서 ${destination}까지의 여행 스케줄을 짜 줘\n\n
-    여행 기간은${date}일이고 
-    {startingPoint}에서 ${destination}로 가는 경로에 유명한 곳이 있다면
-    ${destination}과 같이 소개해줘}
+    I'm going on a ${date}-day trip to ${dest} from ${start}.
+    If you have any travel destinations to recommend in ${dest}, please recommend them.
+    Also, please recommend other things to know while traveling.
   `;
 }
