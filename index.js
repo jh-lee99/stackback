@@ -1,14 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { Configuration, OpenAIApi } from "openai";
-import dotenv from "dotenv";
-dotenv.config();
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+import generate from "./api/generate.js";
 
 const app = express();
 
@@ -22,32 +15,13 @@ app.use(
 
 app.use(bodyParser.json());
 
-app.post("/travelkeyword", async (req, res) => {
-  // const { destination, startingPoint } = req.body;
-  const destination = req.body.destination;
-  try {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: destination,
-      temperature: 0.6,
-    });
-    console.log(completion.data.choices[0].text);
-    res.json({ result: completion.data.choices[0].text });
-  } catch (error) {
-    // Consider adjusting the error handling logic for your use case
-    if (error.response) {
-      console.error(error.response.status, error.response.data);
-      res.status(error.response.status).json(error.response.data);
-    } else {
-      console.error(`Error with OpenAI API request: ${error.message}`);
-      res.status(500).json({
-        error: {
-          message: "An error occurred during your request.",
-        },
-      });
-    }
-  }
-});
+/** /travelkeyword 앤드포인트로 접근 시 사용자 입력 키워드에 대한 답변을 출력한다.
+ * 전체적인 api 사용 과정은 다음과 같다. *
+ * 사용자 입력 키워드 수신
+ * -> 파파고 API 언어감지 기능 사용(한국어 이외의 언어 코드를 반환한다면 키워드를 한국어로 번역 후 프롬포트 생성)
+ * ->
+ */
+app.post("/travelkeyword", generate);
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
