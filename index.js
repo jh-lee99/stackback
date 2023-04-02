@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from 'body-parser';
 import cors from "cors"; 
-import generate from './api/generate.js';
+import travelkeyword from './travelkeyword.js';
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.use(bodyParser.json());
  * -> 파파고 API 언어감지 기능 사용(한국어 이외의 언어 코드를 반환한다면 키워드를 한국어로 번역 후 프롬포트 생성)
  * -> 
 */
-app.post("/travelkeyword", generate);
+app.post("/travelkeyword", travelkeyword);
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
