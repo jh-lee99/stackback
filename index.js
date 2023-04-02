@@ -1,6 +1,6 @@
 import express from "express";
-import bodyParser from 'body-parser';
-import cors from "cors"; 
+import bodyParser from "body-parser";
+import cors from "cors";
 import { Configuration, OpenAIApi } from "openai";
 import dotenv from "dotenv";
 dotenv.config();
@@ -12,11 +12,13 @@ const openai = new OpenAIApi(configuration);
 
 const app = express();
 
-app.use(cors({
-  origin : "http://localhost:3001",
-  methods : "GET, POST, PUT, DELETE, OPTION",
-  credentials : true,
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    methods: "GET, POST, PUT, DELETE, OPTION",
+    credentials: true,
+  })
+);
 
 app.use(bodyParser.json());
 
@@ -31,7 +33,7 @@ app.post("/travelkeyword", async (req, res) => {
     });
     console.log(completion.data.choices[0].text);
     res.json({ result: completion.data.choices[0].text });
-  } catch(error) {
+  } catch (error) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
       console.error(error.response.status, error.response.data);
@@ -40,8 +42,8 @@ app.post("/travelkeyword", async (req, res) => {
       console.error(`Error with OpenAI API request: ${error.message}`);
       res.status(500).json({
         error: {
-          message: 'An error occurred during your request.',
-        }
+          message: "An error occurred during your request.",
+        },
       });
     }
   }
