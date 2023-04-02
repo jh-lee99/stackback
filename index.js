@@ -2,6 +2,9 @@ import express from "express";
 import bodyParser from 'body-parser';
 import cors from "cors"; 
 import generate from './api/generate.js';
+var fs = require('fs');
+var bodyParser = require('body-parser')
+var compression = require('compression')
 
 const app = express();
 
