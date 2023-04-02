@@ -1,5 +1,7 @@
 import express from "express";
-import cors from "cors";
+import bodyParser from 'body-parser';
+import cors from "cors"; 
+import generate from './api/generate.js';
 
 const app = express();
 
@@ -9,27 +11,9 @@ app.use(cors({
   credentials : true,
 }));
 
-app.post("/travelkeyword", async (req, res) => {
-  // const { Destination, StartingPoint } = req.body;
-  const Destination = req.Destination;
-  console.log(req);
+app.use(bodyParser.json());
 
-  try {
-    const response = await axios.post('/api/generate', { 
-      Destination 
-    });
-    // console.log(response.data);
-    //res.sendStatus(200);
-    res.json(response.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal server error');
-  }
-
-  /* something */
-  //res.json({ result });
-});
-
+app.post("/travelkeyword", generate);
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
