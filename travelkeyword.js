@@ -31,7 +31,7 @@ export default async function (req, res) {
     return;
   }
 
-  // // dest 와 start 의 언어코드를 파파고 언어감지 API 를 이용하여 반환
+  // dest 와 start 의 언어코드를 파파고 언어감지 API 를 이용하여 반환
   const [dLangCode, sLangCode] = [await detectLanguage(req, res, dest), await detectLanguage(req, res, start)];
   if (findError("detectLanguage")) return;
   console.log("언어감지 완료: ", dLangCode, '\n');
