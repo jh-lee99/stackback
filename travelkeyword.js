@@ -15,8 +15,8 @@ export default async function (req, res) {
    * 번역된 text를 result로 클라이언트에게 전송
    */
 
-  const { destination = '', startPoint = '' } = req.body;
-  if (destination.trim().length === 0) {
+  const { dest = '', start = '' } = req.body;
+  if (dest.trim().length === 0) {
     res.status(400).json({
       error: {
         message: "Please enter a valid destination",
@@ -27,14 +27,14 @@ export default async function (req, res) {
 
   // // dest와 start의 언어코드
   // const [dLangCode, sLangCode] = ['ko', 'ko'];
-  // dLangCode = detectLanguage(destination);
-  // sLangCode = detectLanguage(startPoint);
+  // dLangCode = detectLanguage(dest);
+  // sLangCode = detectLanguage(start);
   // // 언어코드를 넘겨서 dest 와 start 의 값을 영어로 바꿔준다.
-  // [destination, startPoint] = transelate(req, res, destination, dLangCode, startPoint, sLangCode);
+  // [dest, start] = transelate(req, res, dest, dLangCode, start, sLangCode);
 
 
   // 영문 프롬포트를 생성해서 답변을 받아온다.
-  const answer = await generate(req, res, destination, startPoint);
+  const answer = await generate(req, res, dest, start);
   // answer 를 클라이언트에게 전송한다.
   res.json({ result: answer });
 }
