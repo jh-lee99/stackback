@@ -1,4 +1,4 @@
-const router = require('express').Router();
+/*const router = require('express').Router();
 import users from './users'; //users router 호출
 import messages from './messages'; // message router 호출
 
@@ -17,3 +17,4 @@ router.all('*',(req, res)=>{
 })
 
 module.exports = router;
+*/

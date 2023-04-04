@@ -1,3 +1,5 @@
+/*
+
 // 미들웨어를 등록한다
 app.use(serveStatic(path.join(__dirname, "public")));
 app.use(bodyParser.json());
@@ -78,3 +80,4 @@ app.get("/process/logout", (req, res) => {
     res.redirect("/login.html");
   }
 });
+*/
