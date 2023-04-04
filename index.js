@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import cors from "cors"; 
 import travelkeyword from './travelkeyword.js';
 import mongoose from 'mongoose';
-import usersRouter from './routes/users.js';
+import usersRouter from './routes/usersRoutes.js';
 //import indexRouter from './routes/index.js'; 아직 실행 안함
 
 const app = express();
