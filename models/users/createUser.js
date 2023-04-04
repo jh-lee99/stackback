@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose';
-import createUser from '../../models/users/createUser'
 
 const userSchema = new Schema({
   id: {

@@ -30,7 +30,8 @@ app.listen(3000, () => {
 });
  
 //몽구스 연결, 주소에서 연결 잘 됨
-mongoose.connect('mongodb://127.0.0.1:27017/test', {
+mongoose.connect('Mongo_URI', {
+  dbName: 'for travel',
   useNewUrlParser: true,
   useUnifiedTopology: true
 })

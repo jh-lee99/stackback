@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import { createUser } from '../models/users/createUser.js'; //라우트 설정 -> createUser
+import createUser from '../models/users/createUser.js'; //라우트 설정 -> createUser
 import findUser from '../models/users/findUser.js'; //라우트 설정 -> findUser
 
 
