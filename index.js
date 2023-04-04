@@ -3,14 +3,14 @@ import bodyParser from 'body-parser';
 import cors from "cors"; 
 import travelkeyword from './travelkeyword.js';
 import mongoose from 'mongoose';
-import usersRouter from './routes/usersRoutes.js';
+// import usersRouter from './routes/usersRoutes.js';
 //import indexRouter from './routes/index.js'; 아직 실행 안함
 
 const app = express();
 
 app.use(express.urlencoded({ extended: true })); // URL 인코딩 요청 중첩 개체 구문분석
 app.use(express.json()); //json 형식 인코딩 데이터 처리
-app.use('/users', usersRouter);
+// app.use('/users', usersRouter);
 //app.use('/index', indexRouter); 아직 실행 안함
 
 app.use(cors({
@@ -28,7 +28,7 @@ app.post("/travelkeyword", travelkeyword);
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
 });
- 
+
 //몽구스 연결, 주소에서 연결 잘 됨
 mongoose.connect('Mongo_URI', {
   dbName: 'for travel',
@@ -41,4 +41,4 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connections error:"))
 db.once("open", () => {
   console.log("Database connected");
-})
+});
