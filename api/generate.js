@@ -1,9 +1,10 @@
+// gpt-3.5 모델을 통해 답변을 생성하는 함수
 import { Configuration, OpenAIApi } from "openai";
 import dotenv from "dotenv";
 dotenv.config();
 
 const configuration = new Configuration({
-  organization: "org-5wqEAjf3eFVxmogDQC9ZKNlB",
+  organization: process.env.OPENAI_ORGANIZATION_KEY,
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
@@ -36,10 +37,8 @@ export default async function (req, res, dest, start) {
       temperature: 0.6,
       max_tokens: 2048,
     });
-    // answer 변수를 통해 response로 받은 content를 가져온다.
-    const answer = completion.data.choices[0].message.content;
-    console.log(answer);
-    return answer;
+    // response 로 받은 content 를 반환한다.
+    return completion.data.choices[0].message.content;
     
   } catch(error) {
     // Consider adjusting the error handling logic for your use case

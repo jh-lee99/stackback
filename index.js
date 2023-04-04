@@ -1,16 +1,17 @@
 import express from "express";
 import bodyParser from 'body-parser';
 import cors from "cors"; 
-import generate from './api/generate.js';
 import travelkeyword from './travelkeyword.js';
-
-// var fs = require('fs');
-// var bodyParser = require('body-parser')
-// var compression = require('compression')
+import mongoose from 'mongoose';
+// import usersRouter from './routes/usersRoutes.js';
+//import indexRouter from './routes/index.js'; 아직 실행 안함
 
 const app = express();
 
-
+app.use(express.urlencoded({ extended: true })); // URL 인코딩 요청 중첩 개체 구문분석
+app.use(express.json()); //json 형식 인코딩 데이터 처리
+// app.use('/users', usersRouter);
+//app.use('/index', indexRouter); 아직 실행 안함
 
 app.use(cors({
   origin : "http://localhost:3001",
@@ -20,30 +21,23 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
-/** /travelkeyword 앤드포인트로 접근 시 사용자 입력 키워드에 대한 답변을 출력한다.
- * 전체적인 api 사용 과정은 다음과 같다. *
- * 사용자 입력 키워드 수신 
- * -> 파파고 API 언어감지 기능 사용(한국어 이외의 언어 코드를 반환한다면 키워드를 한국어로 번역 후 프롬포트 생성)
- * -> 
-*/
+/* /travelkeyword 앤드포인트로 접근 시 사용자 입력 키워드에 대한 한글 답변을 출력한다. */
 app.post("/travelkeyword", travelkeyword);
 
+// 포트 3000에서 리딩
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
 });
 
-// router.use("./models", modelsRouter); //models router 적용
-// router.use("./api", apiRouter); //users router 적용
+//몽구스 연결, 주소에서 연결 잘 됨
+mongoose.connect('mongodb://127.0.0.1:27017/test', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 
-// app.use(function (req, res, next) {
-//   res.status(404).send('Sorry cant find that')
-// });
-
-// app.use(function (err, req, res, next) {
-//   console.error(err.stack)
-//   res.status(500).send('Something broke!')
-// })
-
-// app.listen(3000, () => {
-//   console.log('Example app listening on port 3000!')
-// })
+// 몽구스 연결 도중 연결이 끊길때 다시 연결해줌
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connections error:"))
+db.once("open", () => {
+  console.log("Database connected");
+});
