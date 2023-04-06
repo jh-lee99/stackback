@@ -1,3 +1,4 @@
+/*
 import express from 'express';
 const router = express.Router();
 import createUser from '../models/users/createUser.js'; //라우트 설정 -> createUser
@@ -31,3 +32,4 @@ router.post('/login', async (req, res) => {
   });
 
 module.exports = router;
+*/
