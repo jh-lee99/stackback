@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 
 /* /travelkeyword 앤드포인트로 접근 시 사용자 입력 키워드에 대한 한글 답변을 출력한다. */
 app.post("/travelkeyword", travelkeyword);
-app.post('/login', loginController.login);
+app.post('/login', function(req, res) {loginController.login});
 
 
 // 포트 3000에서 리딩
