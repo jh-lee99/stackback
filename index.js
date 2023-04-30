@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from 'body-parser';
 import cors from "cors"; 
 import travelkeyword from './travelkeyword.js';
+import findLocation from './api/findLocation.js';
 
 // var fs = require('fs');
 // var bodyParser = require('body-parser')
@@ -19,6 +20,8 @@ app.use(bodyParser.json());
 
 /* /travelkeyword 앤드포인트로 접근 시 사용자 입력 키워드에 대한 한글 답변을 출력한다. */
 app.post("/travelkeyword", travelkeyword);
+
+app.get("/findLocation", findLocation)
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");

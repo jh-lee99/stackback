@@ -31,26 +31,30 @@ export default async function (req, res) {
     return;
   }
 
+  const [destEN, startEN] = ['ko', 'ko'];
+
   // dest 와 start 의 언어코드를 파파고 언어감지 API 를 이용하여 반환
-  const [dLangCode, sLangCode] = [await detectLanguage(req, res, dest), await detectLanguage(req, res, start)];
-  if (findError("detectLanguage")) return;
-  console.log("언어감지 완료: ", dLangCode, '\n');
+  // const [dLangCode, sLangCode] = [await detectLanguage(req, res, dest), await detectLanguage(req, res, start)];
+  // if (findError("detectLanguage")) return;
+  // console.log("언어감지 완료: ", dLangCode, '\n');
 
   // 언어코드를 넘겨서 dest 와 start 의 값을 영어로 바꿔준다.
-  const [destEN, startEN] = [await transelate(req, res, dest, dLangCode, 'en'), await transelate(req, res, start, sLangCode, 'en')];
-  if (findError("translate_keyword")) return;
-  console.log("키워드 한글 -> 영문번역 완료: ", destEN, startEN, '\n');
+  // [destEN, startEN] = [await transelate(req, res, dest, dLangCode, 'en'), await transelate(req, res, start, sLangCode, 'en')];
+  // if (findError("translate_keyword")) return;
+  // console.log("키워드 한글 -> 영문번역 완료: ", destEN, startEN, '\n');
 
   // 영문 프롬포트를 생성해서 답변을 받아온다.
-  const answer = await generate(req, res, destEN, startEN);
+  let answer = await generate(req, res, dest, start);
   if (findError("generate")) return;
   console.log("gpt 답변생성(원문) 완료: ", answer, '\n');
 
   // 받은 답변을 한글로 번역한다.
-  const answerKO = await transelate(req, res, answer, 'en', 'ko')
-  if (findError("translate_answer")) return;
-  console.log("gpt 답변번역 완료: ", answerKO, '\n');
+  // answer = await transelate(req, res, answer, 'en', 'ko')
+  // if (findError("translate_answer")) return;
+  // console.log("gpt 답변번역 완료: ", answer, '\n');
+
+  // 받은 답변을 브라우저 태그 형태로 변경한다.
 
   // answerKO 를 클라이언트에게 전송한다.
-  await res.json({ result: answerKO });
+  await res.json({ result: answer });
 }
