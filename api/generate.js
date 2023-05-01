@@ -28,11 +28,40 @@ export default async function (req, res, dest, start) {
       messages : [
         {
           "role": "system",
-          "content": `You are an assistant who introduces information 
-          about travel destinations and recommended tourist destinations to users 
-          who are traveling through the period and place entered by the user.`
+          "content": `You are an assistant that receives input from the user who is going on a trip and where the starting point and destination are, and introduces other attractions that the user can travel around the destination.
+
+          Users can enter both the origin and destination, or only the destination.
+          
+          When the user inputs both the starting point and the destination, an additional answer is given on how to move from the starting point to the destination.`
         },
-        {"role": "user", "content": prompt}
+        {
+          "role": "system", 
+          "content": `When the user introduces other attractions that can be traveled around the destination, the front and rear of the place  are marked as follows.
+          
+          Seokguram Grotto' should be written as ' <a class="location" href="#" location="Seokguram Grotto" Seokguram Grotto </a>'.
+          
+          'Dabotap and Seokgatap' is should be written as '<a class="location" href="#" location="Dabotap" Dabotap </a> and <a class="location" href="#" location="Seokgatap" Seokgatap </a>'`
+        },
+        {
+          "role": "user", "content": `I'm going on a 2-day trip to Bulguksa Temple from Wonju City. If you have any travel destinations to recommend in Bulguksa Temple, please recommend them. Also, please recommend other things to know while traveling.`
+        },
+        {
+          "role": "assistant", "content": `Sure, I'd be happy to help you plan your trip to <a class="location" href="#" location="Bulguksa Temple" Bulguksa Temple! </a>
+
+          Firstly, to get from <a class="location" href="#" location="Wonju City" Wonju City </a> to <a class="location" href="#" location="Bulguksa Temple" Bulguksa Temple </a>, you can take a bus or train to <a class="location" href="#" location="Gyeongju City" Gyeongju City </a> and then take a local bus or taxi to the temple. The journey takes about 3.5 hours.
+          
+          As for attractions to visit at <a class="location" href="#" location="Bulguksa Temple" </a>, there are many beautiful and historic sites to explore. Some must-see attractions include:
+          
+          - <a class="location" href="#" location="Seokguram Grotto" Seokguram Grotto </a>: a UNESCO World Heritage site located near <a class="location" href="#" location="Bulguksa Temple" Bulguksa Temple </a> that houses a beautiful stone Buddha statue      
+          - <a class="location" href="#" location="Dabotap" Dabotap </a> and <a class="location" href="#" location="Seokgatap" </a>: two pagodas that are considered to be masterpieces of ancient Korean architecture
+          - <a class="location" href="#" location="Seokgatap" Seokgatap </a> and <a class="location" href="#" location="Baegungjeon" Baegungjeon </a>: two main halls of <a class="location" href="#" location="Bulguksa Temple" Bulguksa Temple </a> that are beautifully decorated and house important relics   
+          
+          In addition to these attractions, you may also want to explore the nearby Gyeongju Historic Areas, which include many other temples, tombs, and ancient ruins.
+          
+          As for other things to know while traveling, it's always a good idea to learn some basic Korean phrases, especially if you plan to travel outside of major tourist areas. It's also important to be respectful of local customs and traditions, such as removing your shoes before entering temples or other sacred sites. Finally, make sure to pack comfortable walking shoes and appropriate clothing for the season, as temperatures can vary greatly in Korea.`
+        },
+        {"role": "system", "content": "answer is korean"},
+        {"role": "user", "content": prompt},
       ],
       temperature: 0.6,
       max_tokens: 2048,
