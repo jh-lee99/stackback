@@ -41,9 +41,9 @@ export default async function (req, res, dest, start) {
           role: "system",
           content: `When the user introduces other attractions that can be traveled around the destination, the front and rear of the place are marked as follows.
           
-          석불암' should be written as '<a class="location" href="#" onClick = "getPlace();" location="석불암"> 석불암 </a>'.
+          석불암' should be written as '<a class="location" href="#" onClick = "() => { getPlace() };" location="석불암"> 석불암 </a>'.
           
-          'Dabotap and Seokgatap' is should be written as '<a class="location" href="#" onClick = "getPlace();" location="Dabotap"> Dabotap </a> and <a class="location" href="#" onClick = "getPlace();" location="Seokgatap"> Seokgatap </a>'`,
+          'Dabotap and Seokgatap' is should be written as '<a class="location" href="#" onClick = "() => { getPlace() };" location="Dabotap"> Dabotap </a> and <a class="location" href="#" onClick = "() => { getPlace() };" location="Seokgatap"> Seokgatap </a>'`,
         },
         {
           role: "user",
@@ -51,15 +51,15 @@ export default async function (req, res, dest, start) {
         },
         {
           role: "assistant",
-          content: `Sure, I'd be happy to help you plan your trip to <a class="location" href="#" onClick = "getPlace();" location="Bulguksa Temple"> Bulguksa Temple! </a>
+          content: `Sure, I'd be happy to help you plan your trip to <a class="location" href="#" onClick = "() => { getPlace() };" location="Bulguksa Temple"> Bulguksa Temple! </a>
 
-          Firstly, to get from <a class="location" href="#" onClick = "getPlace();" location="Wonju City"> Wonju City </a> to <a class="location" href="#" onClick = "getPlace();" location="Bulguksa Temple"> Bulguksa Temple </a>, you can take a bus or train to <a class="location" href="#" onClick = "getPlace();" location="Gyeongju City"> Gyeongju City </a> and then take a local bus or taxi to the temple. The journey takes about 3.5 hours.
+          Firstly, to get from <a class="location" href="#" onClick = "() => { getPlace() };" location="Wonju City"> Wonju City </a> to <a class="location" href="#" onClick = "() => { getPlace() };" location="Bulguksa Temple"> Bulguksa Temple </a>, you can take a bus or train to <a class="location" href="#" onClick = "() => { getPlace() };" location="Gyeongju City"> Gyeongju City </a> and then take a local bus or taxi to the temple. The journey takes about 3.5 hours.
           
-          As for attractions to visit at <a class="location" href="#" onClick = "getPlace();" location="Bulguksa Temple"> Bulguksa Temple </a>, there are many beautiful and historic sites to explore. Some must-see attractions include:
+          As for attractions to visit at <a class="location" href="#" onClick = "() => { getPlace() };" location="Bulguksa Temple"> Bulguksa Temple </a>, there are many beautiful and historic sites to explore. Some must-see attractions include:
           
-          - <a class="location" href="#" onClick = "getPlace();" location="Seokguram Grotto"> Seokguram Grotto </a>: a UNESCO World Heritage site located near <a class="location" href="#" onClick = "getPlace();" location="Bulguksa Temple"> Bulguksa Temple </a> that houses a beautiful stone Buddha statue      
-          - <a class="location" href="#" onClick = "getPlace();" location="Dabotap"> Dabotap </a> and <a class="location" href="#" onClick = "getPlace();" location="Seokgatap"> Seokgatap </a>: two pagodas that are considered to be masterpieces of ancient Korean architecture
-          - <a class="location" href="#" onClick = "getPlace();" location="Seokgatap"> Seokgatap </a> and <a class="location" href="#" onClick = "getPlace();" location="Baegungjeon"> Baegungjeon </a>: two main halls of <a class="location" href="#" onClick = "getPlace();" location="Bulguksa Temple"> Bulguksa Temple </a> that are beautifully decorated and house important relics   
+          - <a class="location" href="#" onClick = "() => { getPlace() };" location="Seokguram Grotto"> Seokguram Grotto </a>: a UNESCO World Heritage site located near <a class="location" href="#" onClick = "() => { getPlace() };" location="Bulguksa Temple"> Bulguksa Temple </a> that houses a beautiful stone Buddha statue      
+          - <a class="location" href="#" onClick = "() => { getPlace() };" location="Dabotap"> Dabotap </a> and <a class="location" href="#" onClick = "() => { getPlace() };" location="Seokgatap"> Seokgatap </a>: two pagodas that are considered to be masterpieces of ancient Korean architecture
+          - <a class="location" href="#" onClick = "() => { getPlace() };" location="Seokgatap"> Seokgatap </a> and <a class="location" href="#" onClick = "() => { getPlace() };" location="Baegungjeon"> Baegungjeon </a>: two main halls of <a class="location" href="#" onClick = "() => { getPlace() };" location="Bulguksa Temple"> Bulguksa Temple </a> that are beautifully decorated and house important relics   
           
           In addition to these attractions, you may also want to explore the nearby Gyeongju Historic Areas, which include many other temples, tombs, and ancient ruins.
           
@@ -68,12 +68,7 @@ export default async function (req, res, dest, start) {
         { role: "system", content: "한국어로 답변해줘" },
         {
           role: "system",
-          content: `Regardless of the language, keep in mind to print in the form <a class="location" href="#" location=placeName> placeName </a>`,
-        },
-        { role: "system", content: "한국어로 답변해줘" },
-        {
-          role: "system",
-          content: `Regardless of the language, keep in mind to print in the form <a class="location" href="#" onClick = "getPlace();" location=placeName> placeName </a>`,
+          content: `Regardless of the language, keep in mind to print in the form <a class="location" href="#" onClick = "() => { getPlace() };" location=placeName> placeName </a>`,
         },
         { role: "user", content: prompt },
       ],
