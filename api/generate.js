@@ -61,7 +61,7 @@ export default async function (req, res, dest, start) {
           As for other things to know while traveling, it's always a good idea to learn some basic Korean phrases, especially if you plan to travel outside of major tourist areas. It's also important to be respectful of local customs and traditions, such as removing your shoes before entering temples or other sacred sites. Finally, make sure to pack comfortable walking shoes and appropriate clothing for the season, as temperatures can vary greatly in Korea.`
         },
         {"role": "system", "content":"한국어로 답변해줘"},
-        {"role": "system", "content": `Regardless of the language, keep in mind to print in the form <a class="location" href="#" location=placeName> placeName </a>`},
+        {"role": "system", "content": `Keep in mind that regardless of language, words that mean places are always printed in <a class="location" href="#" location=placeName> placeName </a> format.`},
         {"role": "user", "content": prompt},
       ],
       temperature: 0.6,
