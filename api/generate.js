@@ -68,7 +68,7 @@ export default async function (req, res, dest, start) {
         { role: "system", content: "한국어로 답변해줘" },
         {
           role: "system",
-          content: `Regardless of the language, keep in mind to print in the form <a class="location" href="#" onclick = "getPlace();" location=placeName> placeName </a>`,
+          content: `Regardless of the language, keep in mind to print in the form <a class="location" href="#" location=placeName> placeName </a>`,
         },
         { role: "system", content: "한국어로 답변해줘" },
         {
