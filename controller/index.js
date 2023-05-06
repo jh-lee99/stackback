@@ -85,6 +85,9 @@ const login = (req, res, next) => {
     try {
       const token = req.body.refreshToken;
       console.log("refreshToken: ", token);
+      // 여기 try-catch문 추가로 작성해서 토큰 만료시의 동작을 작성함.
+      // catch문에 clg로 Refresh token not found 추가해야함
+      // try {
       const data = jwt.verify(token, process.env.REFRESH_SECRET);
       // console.log(data);
       console.log("jwt.verify");
@@ -147,10 +150,26 @@ const login = (req, res, next) => {
     }
   };
 
+  const userInfo = (req, res) => {
+    console.log("호출: userInfo");
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
+    console.log("token: ", token);
+
+    try {
+      const decoded = jwt.verify(token, process.env.ACCESS_SECRET);
+      console.log("decoded", decoded);
+      res.send(decoded);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+
 export {
   login,
   accessToken,
   refreshToken,
   loginSuccess,
   logout,
+  userInfo,
 };
