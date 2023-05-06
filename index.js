@@ -19,9 +19,9 @@ app.use(cookieParser());
 
 app.post("/login", login);
 
-app.get("/accesstoken", accessToken);
+app.get("/api/token/access", accessToken);
 
-app.get("/refreshtoken", refreshToken);
+app.post("/api/token/refresh", refreshToken);
 
 app.get("/login/success", loginSuccess);
 
