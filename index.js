@@ -5,6 +5,7 @@ import cors from "cors";
 import { login, accessToken, refreshToken, loginSuccess, logout, userInfo } from './controller/index.js'
 import travelkeyword from './travelkeyword.js';
 import findLocation from './api/findLocation.js';
+import { connectDB, addUser } from './Database.js';
 
 const app = express();
 
@@ -36,4 +37,15 @@ app.post("/travelkeyword", travelkeyword);
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
+});
+const data = {
+  username : 'admin',
+  email : 'admin',
+  password : 'admin'
+};
+
+connectDB();
+addUser(data).then(() => console.log("admin 계정 생성 완료!"))
+.catch(err => {
+  console.log("admin 이미 생성됨");
 });
