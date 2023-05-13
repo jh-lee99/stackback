@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser'
 import cors from "cors"; 
-import { login, accessToken, refreshToken, loginSuccess, logout, userInfo } from './controller/index.js'
+import { login, accessToken, refreshToken, loginSuccess, logout, userInfo, register } from './controller/index.js'
 import travelkeyword from './travelkeyword.js';
 import findLocation from './api/findLocation.js';
 import { connectDB, addUser } from './Database.js';
@@ -29,6 +29,8 @@ app.get("/login/success", loginSuccess);
 app.post("/logout", logout);
 
 app.get("/userinfo", userInfo);
+
+app.post("/register", register)
 
 app.get("/findLocation", findLocation);
 

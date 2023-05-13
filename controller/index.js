@@ -4,16 +4,16 @@ import jwt from "jsonwebtoken";
 const login = async (req, res) => {
   console.log("호출: login");
   const { email } = req.body; 
-  const userInfo = await getUserData(email)//.then().catch((err)=>console.log("userInfo: ", err));
+  const userdata = await getUserData(email)
   
-  if (!userInfo) {
+  if (!userdata) {
     res.status(403).json("To server: Not Authorized");
   } else {
     try {
       // access Token 발급
       const accessToken = jwt.sign({
-        username : userInfo.username,
-        email : userInfo.email,
+        username : userdata.username,
+        email : userdata.email,
       }, process.env.ACCESS_SECRET, {
         expiresIn : '1m',
         issuer : 'About Tech',
@@ -21,8 +21,8 @@ const login = async (req, res) => {
 
       // refresh Token 발급
       const refreshToken = jwt.sign({
-        username : userInfo.username,
-        email : userInfo.email,
+        username : userdata.username,
+        email : userdata.email,
       }, process.env.REFRESH_SECRET, {
         expiresIn : '1h',
         issuer : 'About Tech',
@@ -40,8 +40,8 @@ const login = async (req, res) => {
       })
 
       res.status(200).json({
-        username : userInfo.username,
-        email : userInfo.email,
+        username : userdata.username,
+        email : userdata.email,
         message : "To server: login success",
       });
       console.log("login success");
@@ -159,6 +159,19 @@ const userInfo = (req, res) => {
   }
 }
 
+const register = async (req, res) => {
+  console.log("호출: register");
+  try {
+    const { username, email, password } = req.body; // username 변수를 정확히 추출
+    const userdata = { username, email, password }; // userdata 객체 생성
+    await addUser(userdata);
+    res.status(200).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export {
   login,
   accessToken,
@@ -166,4 +179,5 @@ export {
   loginSuccess,
   logout,
   userInfo,
+  register,
 };
