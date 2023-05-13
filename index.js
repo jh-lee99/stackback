@@ -49,15 +49,14 @@ app.get("/findLocation", findLocation);
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
 });
-const data = {
-  username: "admin",
-  email: "admin",
-  password: "admin",
-};
+// const data = {
+//   username : 'admin',
+//   email : 'admin',
+//   password : 'admin'
+// };
 
 connectDB();
-addUser(data)
-  .then(() => console.log("admin 계정 생성 완료!"))
-  .catch((err) => {
-    console.log("admin 이미 생성됨");
-  });
+// addUser(data).then(() => console.log("admin 계정 생성 완료!"))
+// .catch(err => {
+//   console.log("admin 이미 생성됨");
+// });
