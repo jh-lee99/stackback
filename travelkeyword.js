@@ -21,7 +21,7 @@ export default async function (req, res) {
     else return false;
   }
 
-  const { dest = '', start = '' } = req.body;
+  const { dest = '', start = '', date = 1} = req.body;
   if (dest.trim().length === 0) {
     res.status(400).json({
       error: {
@@ -31,7 +31,7 @@ export default async function (req, res) {
     return;
   }
 
-  const [destEN, startEN] = ['ko', 'ko'];
+  // const [destEN, startEN] = ['ko', 'ko'];
 
   // dest 와 start 의 언어코드를 파파고 언어감지 API 를 이용하여 반환
   // const [dLangCode, sLangCode] = [await detectLanguage(req, res, dest), await detectLanguage(req, res, start)];
@@ -44,7 +44,7 @@ export default async function (req, res) {
   // console.log("키워드 한글 -> 영문번역 완료: ", destEN, startEN, '\n');
 
   // 영문 프롬포트를 생성해서 답변을 받아온다.
-  let answer = await generate(req, res, dest, start);
+  let answer = await generate(req, res, dest, start, date);
   if (findError("generate")) return;
   console.log("gpt 답변생성(원문) 완료: ", answer, '\n');
 
