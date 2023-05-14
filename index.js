@@ -9,6 +9,7 @@ import {
   loginSuccess,
   logout,
   userInfo,
+  register,
 } from "./controller/index.js";
 import travelkeyword from "./travelkeyword.js";
 import findLocation from "./api/findLocation.js";
@@ -38,6 +39,8 @@ app.get("/login/success", loginSuccess);
 app.post("/logout", logout);
 
 app.get("/userinfo", userInfo);
+
+app.post("/register", register);
 
 app.get("/findLocation", findLocation);
 
