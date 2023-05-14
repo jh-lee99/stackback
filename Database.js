@@ -22,7 +22,59 @@ const userSchema = new Schema({
   }
 });
 
+const messageSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true
+  },
+  message: {
+    type: String,
+    required: true
+  },
+  messageID: {
+    type: Number,
+    required: true
+  },
+  date: {
+    type: Date,
+    required: true,
+    default: Date.now
+  }
+});
+
+// 각 유저의 첫 번째 메시지를 저장할 때마다 messageID 값을 자동으로 증가시킴
+messageSchema.pre('save', async function (next) {
+  const maxMessageCount = 5; // 유저가 저장할 수 있는 최대 메시지 개수
+
+  // 현재 유저의 메시지 개수를 확인
+  const messageCount = await this.constructor.countDocuments({ username: this.username });
+
+  if (messageCount >= maxMessageCount) {
+    // 메시지 개수가 최대 개수 이상인 경우 가장 오래된 메시지를 삭제
+    const oldestMessage = await this.constructor.findOneAndDelete({ username: this.username }, { sort: { messageID: 1 } });
+
+    // 삭제된 메시지보다 messageID가 큰 메시지들의 ID를 1씩 감소시킴
+    await this.constructor.updateMany(
+      { username: this.username, messageID: { $gt: oldestMessage.messageID } },
+      { $inc: { messageID: -1 } }
+    );
+
+    this.messageID = maxMessageCount; // 새로운 메시지의 ID를 최대 개수로 설정
+  } else {
+    // 메시지 개수가 최대 개수 미만인 경우 ID를 증가시킴
+    const existingMessages = await this.constructor.find({ username: this.username }).sort({ messageID: -1 }).limit(1);
+    if (existingMessages.length > 0) {
+      this.messageID = existingMessages[0].messageID + 1;
+    } else {
+      this.messageID = 1;
+    }
+  }
+  next();
+});
+
 export const User = mongoose.model('user', userSchema);
+
+export const Message = mongoose.model('Message', messageSchema);
 
 export async function connectDB() {
   try {
@@ -62,6 +114,7 @@ export const addUser = async (userData) => {
     }); 
 };
 
+// 유저 정보를 가져오는 함수
 export const getUserData = async (email) => {
   try {
     const user = await User.findOne({ email });
@@ -91,10 +144,43 @@ export const updateUserByEmailAndPassword = (email, password, newEmail, newPassw
   );
 };
 
-export default [
-  {
-      username : 'admin',
-      email : 'admin',
-      password : 'admin'
-  },
-]
+// 메시지를 저장하는 함수
+export const saveMessage = async (username, message, messageID = 1) => {
+  try {
+    // 새로운 메시지 인스턴스 생성
+    const newMessage = new Message({
+      username,
+      message,
+      messageID
+    });
+
+    // 메시지 저장
+    const savedMessage = await newMessage.save();
+
+    console.log('메시지가 저장되었습니다:', savedMessage);
+    return savedMessage;
+  } catch (error) {
+    console.error('메시지 저장 중 오류가 발생했습니다:', error);
+    throw error;
+  }
+};
+
+// username과 messageID를 통해 메시지를 조회하는 함수
+export const findmessage = async (req, res) => {
+  try {
+    const username = req.query.username;
+    const messageID = req.query.messageID;
+    const message = await Message.findOne({ username: username, messageID: messageID });
+
+    if (!message) {
+      // 해당 messageID와 username에 대한 메시지가 없을 경우
+      return res.status(404).json({ error: "메시지를 찾을 수 없습니다." });
+    }
+
+    // 클라이언트에게 메시지 전송
+    res.json({ message: message });
+  } catch (error) {
+    console.error("메시지 조회 중 오류가 발생했습니다:", error);
+    res.status(500).json({ error: "메시지 조회 중 오류가 발생했습니다." });
+  }
+}
