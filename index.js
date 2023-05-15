@@ -13,7 +13,7 @@ import {
 } from "./controller/index.js";
 import travelkeyword from "./travelkeyword.js";
 import findLocation from "./api/findLocation.js";
-import { connectDB, addUser } from "./Database.js";
+import { connectDB, addUser, findmessage } from "./Database.js";
 
 const app = express();
 
@@ -42,7 +42,7 @@ app.get("/userinfo", userInfo);
 
 app.post("/register", register);
 
-app.get("/findLocation", findLocation);
+app.get("/findmessage", findmessage);
 
 /* /travelkeyword 앤드포인트로 접근 시 사용자 입력 키워드에 대한 한글 답변을 출력한다. */
 app.post("/travelkeyword", travelkeyword);

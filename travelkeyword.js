@@ -11,6 +11,7 @@
 import detectLanguage from './api/detectLanguage.js';
 import generate from './api/generate.js';
 import transelate from './api/transelate.js';
+import { saveMessage } from './Database.js';
 
 export default async function (req, res) {
   const findError = function(text) {
@@ -53,7 +54,9 @@ export default async function (req, res) {
   // if (findError("translate_answer")) return;
   // console.log("gpt 답변번역 완료: ", answer, '\n');
 
-  // 받은 답변을 브라우저 태그 형태로 변경한다.
+  const username = req.body.username;
+  // 받은 답변을 데이터베이스에 저장한다.
+  await saveMessage(username, answer);
 
   // answerKO 를 클라이언트에게 전송한다.
   await res.json({ result: answer });
