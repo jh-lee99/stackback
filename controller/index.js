@@ -1,7 +1,7 @@
-import { User, addUser, getUserData } from '../Database.js';
+import { User, addUser, getUserData , updateUsername, updatePassword} from '../Database.js';
 import jwt from "jsonwebtoken";
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   console.log("호출: login");
   const { email } = req.body; 
   const userdata = await getUserData(email)
@@ -53,7 +53,7 @@ const login = async (req, res) => {
 };
   
 // 용도 : access token의 만료 여부 확인.
-const accessToken = (req, res) => {
+export const accessToken = (req, res) => {
   console.log("호출: accessToken");
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
@@ -78,7 +78,7 @@ const accessToken = (req, res) => {
 };
 
 // 용도 : access token을 갱신.
-const refreshToken = async (req, res) => {
+export const refreshToken = async (req, res) => {
   console.log("호출: refreshToken");
   try {
     const token = req.body.refreshToken;
@@ -117,7 +117,7 @@ const refreshToken = async (req, res) => {
   }
 };
 
-const loginSuccess = async (req, res) => {
+export const loginSuccess = async (req, res) => {
   console.log("호출: loginSuccess");
   try {
     const token = req.cookies.accessToken;
@@ -134,7 +134,7 @@ const loginSuccess = async (req, res) => {
   }
 };
 
-const logout = (req, res) => {
+export const logout = (req, res) => {
   console.log("호출: logout");
   try {
     res.cookie('accessToken', '');
@@ -144,7 +144,7 @@ const logout = (req, res) => {
   }
 };
 
-const userInfo = (req, res) => {
+export const userInfo = (req, res) => {
   console.log("호출: userInfo");
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
@@ -159,7 +159,7 @@ const userInfo = (req, res) => {
   }
 }
 
-const register = async (req, res) => {
+export const register = async (req, res) => {
   console.log("호출: register");
   try {
     const { username, email, password } = req.body; // username 변수를 정확히 추출
@@ -172,12 +172,29 @@ const register = async (req, res) => {
   }
 };
 
-export {
-  login,
-  accessToken,
-  refreshToken,
-  loginSuccess,
-  logout,
-  userInfo,
-  register,
-};
+export const updateusername = async (req, res) => {
+  console.log("호출: updateUser");
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    const username = req.body.username;
+    const newUsername = req.body.newUsername;
+    const updatedUser = await updateUsername(email, password, username, newUsername);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}
+
+export const updatepassword = async (req, res) => {
+  console.log("호출: updateUser");
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    const newPassword = req.body.newPassword;
+    const updatedUser = await updatePassword(email, password, newPassword);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}
