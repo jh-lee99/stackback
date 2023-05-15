@@ -10,10 +10,12 @@ import {
   logout,
   userInfo,
   register,
+  updateusername,
+  updatepassword,
 } from "./controller/index.js";
 import travelkeyword from "./travelkeyword.js";
 import findLocation from "./api/findLocation.js";
-import { connectDB, addUser, findmessage } from "./Database.js";
+import { connectDB, findmessage } from "./Database.js";
 
 const app = express();
 
@@ -43,6 +45,12 @@ app.get("/userinfo", userInfo);
 app.post("/register", register);
 
 app.get("/findmessage", findmessage);
+
+app.post("/update/user", updateusername);
+
+app.post("update/password", updatepassword);
+
+app.get("/findLocation", findLocation);
 
 /* /travelkeyword 앤드포인트로 접근 시 사용자 입력 키워드에 대한 한글 답변을 출력한다. */
 app.post("/travelkeyword", travelkeyword);

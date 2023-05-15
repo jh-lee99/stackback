@@ -134,29 +134,62 @@ export const getUserData = async (email) => {
   }
 };
 
-// email과 password가 일치하는 사용자를 찾아 email과 password를 수정하는 함수
-export const updateUserByEmailAndPassword = (
+export const updateUsername = async (
   email,
   password,
-  newEmail,
-  newPassword,
-  callback
+  username,
+  newUsername
 ) => {
-  // email과 password가 일치하는 사용자를 찾아서 email과 password를 수정
-  User.findOneAndUpdate(
-    { email: email, password: password }, // 일치하는 조건
-    { email: newEmail, password: newPassword }, // 수정할 값
-    { new: true }, // 수정된 문서 반환
-    (err, updatedUser) => {
-      if (err) {
-        // 에러 발생 시 콜백 함수 호출
-        callback(err, null);
-      } else {
-        // 수정된 사용자 정보 반환
-        callback(null, updatedUser);
-      }
-    }
-  );
+  try {
+    // 수정된 사용자 정보 반환
+    const updatedUser = await User.findOneAndUpdate(
+      { username: username, email: email, password: password }, // 일치하는 조건
+      { username: newUsername }, // 수정할 값
+      { new: true } // 수정된 문서 반환
+    );
+    return updatedUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// email과 password가 일치하는 사용자를 찾아 password를 수정하는 함수
+export const updatePassword = async (email, password, newPassword) => {
+  try {
+    // 수정된 사용자 정보 반환
+    const updatedUser = await User.findOneAndUpdate(
+      { email: email, password: password }, // 일치하는 조건
+      { password: newPassword }, // 수정할 값
+      { new: true } // 수정된 문서 반환
+    );
+    return updatedUser;
+  } catch (error) {
+    throw error;
+  }
+  //   const updatedUser = await User.findOneAndUpdate(
+  //     { email: email, password: password },
+  //     { password: newPassword },
+  //     { new: true }
+  //   );
+  //   callback(null, updatedUser); // 성공적인 결과를 콜백으로 전달
+  // } catch (error) {
+  //   callback(error, null); // 오류를 콜백으로 전달
+  // }
+
+  // User.findOneAndUpdate(
+  //   { email: email, password: password }, // 일치하는 조건
+  //   { password: newPassword }, // 수정할 값
+  //   { new: true }, // 수정된 문서 반환
+  //   (err, updatedUser) => {
+  //     if (err) {
+  //       // 에러 발생 시 콜백 함수 호출
+  //       callback(err, null);
+  //     } else {
+  //       // 수정된 사용자 정보 반환
+  //       callback(null, updatedUser);
+  //     }
+  //   }
+  // );
 };
 
 // 메시지를 저장하는 함수
