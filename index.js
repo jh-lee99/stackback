@@ -4,8 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import {
   login,
-  accessToken,
-  refreshToken,
+  verifyToken,
   loginSuccess,
   logout,
   userInfo,
@@ -29,12 +28,20 @@ app.use(
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use((req, res, next) => {
+  const { accessToken, refreshToken } = req.cookies;
+  req.accessToken = accessToken; // accessToken을 req 객체의 프로퍼티로 저장
+  req.refreshToken = refreshToken; // refreshToken을 req 객체의 프로퍼티로 저장
+  next();
+});
 
 app.post("/login", login);
 
-app.get("/api/token/access", accessToken);
+// app.get("/api/token/access", accessToken);
 
-app.post("/api/token/refresh", refreshToken);
+// app.post("/api/token/refresh", refreshToken);
+
+app.get("/api/token/verify", verifyToken);
 
 app.get("/login/success", loginSuccess);
 
