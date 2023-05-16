@@ -132,9 +132,9 @@ export const addUser = async (userData) => {
 };
 
 // 유저 정보를 가져오는 함수
-export const getUserData = async (email) => {
+export const getUserData = async (email, password) => {
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email, password });
     return user;
   } catch (error) {
     console.log(error);
