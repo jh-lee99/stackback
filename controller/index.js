@@ -173,26 +173,28 @@ export const register = async (req, res) => {
 };
 
 export const updateusername = async (req, res) => {
-  console.log("호출: updateUser");
+  console.log("호출: updateusername");
   try {
     const email = req.body.email;
     const password = req.body.password;
     const username = req.body.username;
     const newUsername = req.body.newUsername;
     const updatedUser = await updateUsername(email, password, username, newUsername);
-    res.status(200).json(updatedUser);
+    console.log("updateusername 완료");
+    await res.status(200).json(updatedUser);
   } catch (error) {
-    res.status(500).json(error);
-  }
+    await res.status(500).json(error);
+  } 
 }
 
 export const updatepassword = async (req, res) => {
-  console.log("호출: updateUser");
+  console.log("호출: updatepassword");
   try {
     const email = req.body.email;
     const password = req.body.password;
     const newPassword = req.body.newPassword;
     const updatedUser = await updatePassword(email, password, newPassword);
+    console.log("updatepassword 완료");
     res.status(200).json(updatedUser);
   } catch (error) {
     res.status(500).json(error);

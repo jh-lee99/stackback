@@ -80,6 +80,25 @@ messageSchema.pre("save", async function (next) {
   next();
 });
 
+messageSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+  const username = update.$set.username;
+  if (username) {
+    try {
+      // username이 변경된 경우 해당 username을 가진 모든 메시지의 username을 업데이트
+      await this.model.updateMany(
+        { username: this._conditions.username },
+        { $set: { username } }
+      );
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
+  }
+});
+
 export const User = mongoose.model("user", userSchema);
 
 export const Message = mongoose.model("Message", messageSchema);
@@ -147,6 +166,8 @@ export const updateUsername = async (
       { username: newUsername }, // 수정할 값
       { new: true } // 수정된 문서 반환
     );
+    // message 데이터베이스의 username 값을 업데이트
+    await Message.updateMany({ username: username }, { username: newUsername });
     return updatedUser;
   } catch (error) {
     throw error;
@@ -229,7 +250,7 @@ export const findmessage = async (req, res) => {
     }
 
     // 클라이언트에게 메시지 전송
-    res.json({ message: message.message });
+    res.json(message);
   } catch (error) {
     console.error("메시지 조회 중 오류가 발생했습니다:", error);
     res.status(500).json({ error: "메시지 조회 중 오류가 발생했습니다." });
