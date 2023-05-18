@@ -2,10 +2,10 @@ import express from "express";
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser'
 import cors from "cors"; 
-import { login, verifyToken, loginSuccess, logout, userInfo, register , updateusername, updatepassword} from './controller/index.js'
+import { login, verifyToken, loginSuccess, logout, userInfo, register , updateusername, updatepassword, findmessage} from './controller/index.js'
 import travelkeyword from './travelkeyword.js';
 import findLocation from './api/findLocation.js';
-import { connectDB, findmessage } from './Database.js';
+import { connectDB } from './Database.js';
 
 const app = express();
 
@@ -44,7 +44,7 @@ app.get("/findmessage", findmessage);
 
 app.post("/update/user", updateusername);
 
-app.post("update/password", updatepassword)
+app.post("/update/password", updatepassword)
 
 app.get("/findLocation", findLocation);
 
