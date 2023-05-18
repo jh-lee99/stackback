@@ -8,26 +8,25 @@
  * 번역된 dest, start, answer 를 DB에 저장
  * 번역된 answer 를 result 로 클라이언트에게 전송
  */
-import detectLanguage from './api/detectLanguage.js';
-import generate from './api/generate.js';
-import transelate from './api/transelate.js';
-import { saveMessage } from './Database.js';
+import detectLanguage from "./api/detectLanguage.js";
+import generate from "./api/generate.js";
+import transelate from "./api/transelate.js";
+import { saveMessage } from "./Database.js";
 
 export default async function (req, res) {
-  const findError = function(text) {
+  const findError = function (text) {
     if (res.statusCode >= 400 && res.statusCode < 600) {
       console.log(`Error occurred ${text}:`, res.statusMessage);
       return true;
-    }
-    else return false;
-  }
+    } else return false;
+  };
 
-  const { dest = '', start = '', date = 1} = req.body;
+  const { dest = "", start = "", date = 1 } = req.body;
   if (dest.trim().length === 0) {
     res.status(400).json({
       error: {
         message: "Please enter a valid destination",
-      }
+      },
     });
     return;
   }
@@ -47,7 +46,7 @@ export default async function (req, res) {
   // 영문 프롬포트를 생성해서 답변을 받아온다.
   let answer = await generate(req, res, dest, start, date);
   if (findError("generate")) return;
-  console.log("gpt 답변생성(원문) 완료: ", answer, '\n');
+  console.log("gpt 답변생성(원문) 완료: ", answer, "\n");
 
   // 받은 답변을 한글로 번역한다.
   // answer = await transelate(req, res, answer, 'en', 'ko')
