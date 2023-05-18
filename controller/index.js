@@ -53,26 +53,18 @@ export const refreshAccessToken = async (req, res) => {
     try {
       const data = jwt.verify(req.refreshToken, process.env.REFRESH_SECRET);
       const userData = await getUserData(data.email, data.password)
-      createAccessToken(userData).then((token) => {
+      await createAccessToken(userData).then((token) => {
         console.log("newAccessToken: ", token);
         res.cookie("accessToken", token, {
           secure: false,
           httpOnly: true,
         });
-      }).catch((error) => {
-        console.log(error);
+        return token;
       });
-      
-
-
-      // const newAccessToken = createAccessToken(userData); // Access Token 새로 발급
-      // console.log("newAccessToken was created");
-      // console.log("newAccessToken: ", newAccessToken);
-      // res.cookie("accessToken", newAccessToken, {
-      //   secure : false,
-      //   httpOnly : true,
-      // })
-      // return newAccessToken;
+      // .catch((error) => {
+      //   console.log(error);
+      //   return error;
+      // });
     } catch (error) {
       console.log("refreshToken was expired.");
       throw Error("refreshToken was expired.");
@@ -165,7 +157,7 @@ export const loginSuccess = async (req, res) => {
 export const userInfo = async (req, res) => {
   console.log("호출: userInfo");
   try {
-    const accessToken = refreshAccessToken(req, res);
+    const accessToken = await refreshAccessToken(req, res);
     console.log("accessToken: ", accessToken);
     const data = jwt.verify(accessToken, process.env.ACCESS_SECRET);
     console.log("data", data);
