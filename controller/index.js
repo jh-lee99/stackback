@@ -1,4 +1,4 @@
-import { User, addUser, getUserData , updateUsername, updatePassword} from '../Database.js';
+import { User, addUser, getUserData , updateUsername, updatePassword, findMessage} from '../Database.js';
 import jwt from "jsonwebtoken";
 
 // accessToken 을 생성하는 함수
@@ -87,6 +87,7 @@ export const verifyToken = async (req, res) => {
         message: "newAccessToken was created."
       });
     } catch(error) {
+      console.log(error);
       res.clearCookie("accessToken", {
         secure: false,
         httpOnly: true,
@@ -125,7 +126,7 @@ export const login = async (req, res) => {
       res.status(200).json({
         username : userData.username,
         email : userData.email,
-        message : "로그인이 성공적으로 이루어졌습니다!",
+        message : userData.username+" 로그인",
       });
       console.log(res.message);
     } catch (error) {
@@ -180,7 +181,7 @@ export const logout = (req, res) => {
       secure: false,
       httpOnly: true,
     });
-    res.status(200).json({message: "To server: Logout Success"});
+    res.status(200).json({message: "로그아웃 되었습니다."});
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
@@ -230,5 +231,21 @@ export const updatepassword = async (req, res) => {
     res.status(200).json(updatedUser);
   } catch (error) {
     res.status(500).json(error);
+  }
+}
+
+export const findmessage = async (req, res) => {
+  console.log("호출: findmessage");
+  try {
+    const userData = jwt.verify(req.accessToken, process.env.ACCESS_SECRET);
+    const message = await findMessage(userData.username, req.query.messageID);
+    if(!message) {
+      return res.status(404).json({ error: "메시지를 찾을 수 없습니다." });
+    }
+    // 클라이언트에게 메시지 전송
+    res.json(message);
+  } catch (error) {
+    console.error("메시지 조회 중 오류가 발생했습니다:", error);
+    res.status(500).json({ error: "메시지 조회 중 오류가 발생했습니다." });
   }
 }

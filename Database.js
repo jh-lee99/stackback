@@ -235,24 +235,15 @@ export const saveMessage = async (username, message, messageID = 1) => {
 };
 
 // username과 messageID를 통해 메시지를 조회하는 함수
-export const findmessage = async (req, res) => {
+export const findMessage = async (username, messageID) => {
   try {
-    const username = req.query.username;
-    const messageID = req.query.messageID;
     const message = await Message.findOne({
       username: username,
       messageID: messageID,
     });
-
-    if (!message) {
-      // 해당 messageID와 username에 대한 메시지가 없을 경우
-      return res.status(404).json({ error: "메시지를 찾을 수 없습니다." });
-    }
-
-    // 클라이언트에게 메시지 전송
-    res.json(message);
+    return message;
   } catch (error) {
     console.error("메시지 조회 중 오류가 발생했습니다:", error);
-    res.status(500).json({ error: "메시지 조회 중 오류가 발생했습니다." });
+    return error;
   }
 };

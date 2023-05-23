@@ -12,6 +12,7 @@ import detectLanguage from "./api/detectLanguage.js";
 import generate from "./api/generate.js";
 import transelate from "./api/transelate.js";
 import { saveMessage } from "./Database.js";
+import jwt from "jsonwebtoken";
 
 export default async function (req, res) {
   const findError = function (text) {
@@ -20,6 +21,8 @@ export default async function (req, res) {
       return true;
     } else return false;
   };
+  const userdata = jwt.verify(req.accessToken, process.env.ACCESS_SECRET);
+  const username = userdata.username;
 
   const { dest = "", start = "", date = 1 } = req.body;
   if (dest.trim().length === 0) {
@@ -52,8 +55,6 @@ export default async function (req, res) {
   // answer = await transelate(req, res, answer, 'en', 'ko')
   // if (findError("translate_answer")) return;
   // console.log("gpt 답변번역 완료: ", answer, '\n');
-
-  const username = req.body.username;
   // 받은 답변을 데이터베이스에 저장한다.
   await saveMessage(username, answer);
 
