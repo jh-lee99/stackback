@@ -53,14 +53,15 @@ export const refreshAccessToken = async (req, res) => {
     try {
       const data = jwt.verify(req.refreshToken, process.env.REFRESH_SECRET);
       const userData = await getUserData(data.email, data.password)
-      await createAccessToken(userData).then((token) => {
-        console.log("newAccessToken: ", token);
-        res.cookie("accessToken", token, {
+      const newAccessToken = await createAccessToken(userData)
+      
+        console.log("newAccessToken: ", newAccessToken);
+        res.cookie("accessToken", newAccessToken, {
           secure: false,
           httpOnly: true,
         });
-        return token;
-      });
+        console.log("userData", userData);
+      return newAccessToken;
       // .catch((error) => {
       //   console.log(error);
       //   return error;
