@@ -69,13 +69,12 @@ export const refreshAccessToken = async (req, res) => {
       const data = jwt.verify(req.refreshToken, process.env.REFRESH_SECRET);
       const userData = await getUserData(data.email, data.password);
       const newAccessToken = await createAccessToken(userData);
-
       console.log("newAccessToken: ", newAccessToken);
       res.cookie("accessToken", newAccessToken, {
         secure: false,
         httpOnly: true,
       });
-      console.log("userData", userData);
+      // console.log("userData", userData);
       return newAccessToken;
       // .catch((error) => {
       //   console.log(error);
@@ -83,14 +82,8 @@ export const refreshAccessToken = async (req, res) => {
       // });
     } catch (error) {
       console.log("refreshToken was expired.");
-      res.clearCookie("accessToken", {
-        secure: false,
-        httpOnly: true,
-      });
-      res.clearCookie("refreshToken", {
-        secure: false,
-        httpOnly: true,
-      });
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
       res.status(401).json({
         error: "refreshToken was expired. Please log in again.",
       });
@@ -112,10 +105,23 @@ export const verifyToken = async (req, res) => {
       const newAccessToken = await refreshAccessToken(req, res);
       const userdata = jwt.verify(newAccessToken, process.env.ACCESS_SECRET);
       res.status(200).json({
-        message: "newAccessToken was created.",
         userdata,
+        message: "newAccessToken was created.",
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log("refreshToken was expired");
+      // res.clearCookie("accessToken", {
+      //   secure: false,
+      //   httpOnly: true,
+      // });
+      // res.clearCookie("refreshToken", {
+      //   secure: false,
+      //   httpOnly: true,
+      // });
+      // res.status(500).json({
+      //   error: "refreshToken was expired."
+      // });
+    }
   }
 };
 
@@ -144,7 +150,7 @@ export const login = async (req, res) => {
         email: userData.email,
         message: userData.username + " 로그인",
       });
-      console.log(res.message);
+      // console.log(res.message);
     } catch (error) {
       res.status(500).json(error);
     }
@@ -189,14 +195,8 @@ export const userInfo = async (req, res) => {
 export const logout = (req, res) => {
   console.log("호출: logout");
   try {
-    res.clearCookie("accessToken", {
-      secure: false,
-      httpOnly: true,
-    });
-    res.clearCookie("refreshToken", {
-      secure: false,
-      httpOnly: true,
-    });
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
     res.status(200).json({ message: "로그아웃 되었습니다." });
   } catch (error) {
     console.log(error);
@@ -220,37 +220,69 @@ export const register = async (req, res) => {
 export const updateusername = async (req, res) => {
   console.log("호출: updateusername");
   try {
-    const accessToken = refreshAccessToken(req, res);
+    const accessToken = await refreshAccessToken(req, res);
     const userData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
     const { email, username, password } = userData;
+    const newUsername = req.body.newUsername;
     const enteredPassword = req.body.password;
+    console.log(req.body);
     // enteredPassword 값이랑 password 값이랑 같은지 보고 다르면 상태코드 400번대로 반환함.
     // 같으면 updateUsername 으로 데이터베이스 변경하고 200번 상태코드로 전송
-    const newUsername = req.body.newUsername;
-    const updatedUser = await updateUsername(
-      email,
-      password,
-      username,
-      newUsername
-    );
-    console.log("updateusername 완료");
-    await res.status(200).json(updatedUser);
+    if (enteredPassword === password) {
+      const updatedUser = await updateUsername(
+        email,
+        password,
+        username,
+        newUsername
+      );
+      console.log("updateusername 완료");
+      const accessToken = await createAccessToken(updatedUser);
+      res.cookie("accessToken", accessToken, {
+        secure: false,
+        httpOnly: true,
+      });
+      const refreshToken = await createRefreshToken(updatedUser);
+      res.cookie("refreshToken", refreshToken);
+      res.status(200).json(updatedUser);
+    } else {
+      console.log("비밀번호가 일치하지 않음");
+      res.status(401).json({ message: "비밀번호가 일치하지 않음" });
+    }
   } catch (error) {
-    await res.status(500).json(error);
+    // await res.status(500).json(error);
+    console.log("refreshToken was expired");
   }
 };
 
 export const updatepassword = async (req, res) => {
   console.log("호출: updatepassword");
   try {
-    const email = req.body.email;
-    const password = req.body.password;
+    const accessToken = await refreshAccessToken(req, res);
+    const userData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+    const { email, password } = userData;
+    const enteredEmail = req.body.email;
+    const enteredPassword = req.body.password;
     const newPassword = req.body.newPassword;
-    const updatedUser = await updatePassword(email, password, newPassword);
-    console.log("updatepassword 완료");
-    res.status(200).json(updatedUser);
+    console.log(email);
+    console.log(password);
+    console.log(enteredEmail);
+    console.log(enteredPassword);
+    console.log(newPassword);
+    if (enteredEmail === email && enteredPassword === password) {
+      const updatedUser = await updatePassword(
+        enteredEmail,
+        enteredPassword,
+        newPassword
+      );
+      console.log("updatepassword 완료");
+      res.status(200).json(updatedUser);
+    } else {
+      console.log("회원정보가 일치하지 않음");
+      res.status(401).json({ message: "회원정보가 일치하지 않음" });
+    }
   } catch (error) {
-    res.status(500).json(error);
+    // res.status(500).json(error);
+    console.log("refreshToken was expired");
   }
 };
 
