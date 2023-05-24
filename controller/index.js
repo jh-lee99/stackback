@@ -48,7 +48,7 @@ export const refreshAccessToken = async (req, res) => {
     jwt.verify(req.accessToken, process.env.ACCESS_SECRET);
     console.log("accessToken still alive.");
     console.log("accessToken: ", req.accessToken);
-    return accessToken;
+    return req.accessToken;
   } catch {
     try {
       const data = jwt.verify(req.refreshToken, process.env.REFRESH_SECRET);
@@ -68,7 +68,17 @@ export const refreshAccessToken = async (req, res) => {
       // });
     } catch (error) {
       console.log("refreshToken was expired.");
-      throw Error("refreshToken was expired.");
+      res.clearCookie("accessToken", {
+        secure: false,
+        httpOnly: true,
+      });
+      res.clearCookie("refreshToken", {
+        secure: false,
+        httpOnly: true,
+      });
+      res.status(401).json({
+        error: "refreshToken was expired. Please log in again.",
+      });
     }
   }
 };
@@ -91,18 +101,6 @@ export const verifyToken = async (req, res) => {
         userdata,
       });
     } catch(error) {
-      console.log(error);
-      res.clearCookie("accessToken", {
-        secure: false,
-        httpOnly: true,
-      });
-      res.clearCookie("refreshToken", {
-        secure: false,
-        httpOnly: true,
-      });
-      res.status(500).json({
-        error: "refreshToken was expired."
-      });
     }
   }
 }
