@@ -207,10 +207,24 @@ export const logout = (req, res) => {
 export const register = async (req, res) => {
   console.log("호출: register");
   try {
-    const accessToken = await refreshAccessToken(req, res);
-    const userData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-    await addUser(userData);
-    res.status(200).json({ message: "User registered successfully" });
+    const userData = req.body;
+    const createdUser = await addUser(userData);
+    const accessToken = await createAccessToken(createdUser);
+    const refreshToken = await createRefreshToken(createdUser);
+    res.cookie("accessToken", accessToken, {
+      secure: false,
+      httpOnly: true,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      secure: false,
+      httpOnly: true,
+    });
+    // const userData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+    res.status(200).json({
+      username: userData.username,
+      email: userData.email,
+      message: "User registered successfully",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
