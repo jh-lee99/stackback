@@ -29,16 +29,16 @@ export const createRefreshToken = async (userData) => {
 
 // accessToken 의 만료 여부를 확인하는 함수
 export const isAccessTokenAlive = (accessToken) => {
-console.log("호출: isAccessTokenAlive");
-try {
-  const data = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-  console.log("accessToken still alive.");
-  console.log(data);
-} catch (error) {
-  console.log("accessToken was expired.");
-  return false;
-}
-return true;
+  console.log("호출: isAccessTokenAlive");
+  try {
+    const data = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+    console.log("accessToken still alive.");
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log("accessToken was expired.");
+    return null;
+  }
 };
 
 // accessToken 을 갱신하거나 반환하는 함수
@@ -76,15 +76,18 @@ export const refreshAccessToken = async (req, res) => {
 export const verifyToken = async (req, res) => {
   console.log("호출: verifyToken");
   const accessToken = req.accessToken;
-  if (isAccessTokenAlive(accessToken)) {
+  const userdata = isAccessTokenAlive(accessToken)
+  if (userdata) {
     res.status(200).json({
-        message: "accessToken still alive."
+        userdata,
     });
   } else {
     try {
-      await refreshAccessToken(req, res);
+      const newAccessToken = await refreshAccessToken(req, res);
+      const userdata = jwt.verify(newAccessToken, process.env.ACCESS_SECRET);
       res.status(200).json({
-        message: "newAccessToken was created."
+        message: "newAccessToken was created.",
+        userdata,
       });
     } catch(error) {
       console.log(error);
