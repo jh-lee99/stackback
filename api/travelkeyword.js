@@ -8,10 +8,10 @@
  * 번역된 dest, start, answer 를 DB에 저장
  * 번역된 answer 를 result 로 클라이언트에게 전송
  */
-import detectLanguage from "./api/detectLanguage.js";
-import generate from "./api/generate.js";
-import transelate from "./api/transelate.js";
-import { saveMessage } from "./Database.js";
+import detectLanguage from "./detectLanguage.js";
+import generate from "./generate.js";
+import transelate from "./transelate.js";
+import { saveMessage } from "../database/index.js";
 import jwt from "jsonwebtoken";
 
 export default async function (req, res) {

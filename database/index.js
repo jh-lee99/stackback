@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
-
 const Schema = mongoose.Schema;
-
 const userSchema = new Schema({
   username: {
     type: String,
@@ -51,8 +49,8 @@ messageSchema.pre("save", async function (next) {
     username: this.username,
   });
 
+  // 메시지 개수가 최대 개수 이상인 경우 가장 오래된 메시지를 삭제
   if (messageCount >= maxMessageCount) {
-    // 메시지 개수가 최대 개수 이상인 경우 가장 오래된 메시지를 삭제
     const oldestMessage = await this.constructor.findOneAndDelete(
       { username: this.username },
       { sort: { messageID: 1 } }
@@ -153,12 +151,7 @@ export const getUserData = async (email, password) => {
   }
 };
 
-export const updateUsername = async (
-  email,
-  password,
-  username,
-  newUsername
-) => {
+export const updateUsername = async (email, password, username, newUsername) => {
   try {
     // 수정된 사용자 정보 반환
     const updatedUser = await User.findOneAndUpdate(
