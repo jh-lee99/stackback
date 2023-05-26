@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
+
 const Schema = mongoose.Schema;
+
 const userSchema = new Schema({
   username: {
     type: String,
@@ -180,46 +182,18 @@ export const updatePassword = async (email, password, newPassword) => {
   } catch (error) {
     throw error;
   }
-  //   const updatedUser = await User.findOneAndUpdate(
-  //     { email: email, password: password },
-  //     { password: newPassword },
-  //     { new: true }
-  //   );
-  //   callback(null, updatedUser); // 성공적인 결과를 콜백으로 전달
-  // } catch (error) {
-  //   callback(error, null); // 오류를 콜백으로 전달
-  // }
-
-  // User.findOneAndUpdate(
-  //   { email: email, password: password }, // 일치하는 조건
-  //   { password: newPassword }, // 수정할 값
-  //   { new: true }, // 수정된 문서 반환
-  //   (err, updatedUser) => {
-  //     if (err) {
-  //       // 에러 발생 시 콜백 함수 호출
-  //       callback(err, null);
-  //     } else {
-  //       // 수정된 사용자 정보 반환
-  //       callback(null, updatedUser);
-  //     }
-  //   }
-  // );
 };
 
 // 메시지를 저장하는 함수
 export const saveMessage = async (username, message, messageID = 1) => {
   try {
     // 새로운 메시지 인스턴스 생성
-    const newMessage = new Message({
-      username,
-      message,
-      messageID,
-    });
+    const newMessage = new Message({ username, message, messageID, });
 
     // 메시지 저장
     const savedMessage = await newMessage.save();
-
-    console.log("메시지가 저장되었습니다:", savedMessage);
+    console.log("메시지가 저장되었습니다:");
+    // console.log(savedMessage);
     return savedMessage;
   } catch (error) {
     console.error("메시지 저장 중 오류가 발생했습니다:", error);

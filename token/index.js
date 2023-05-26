@@ -56,7 +56,6 @@ export const refreshAccessToken = async (req, res) => {
   try {
     jwt.verify(req.accessToken, process.env.ACCESS_SECRET);
     console.log("accessToken still alive.");
-    console.log("accessToken: ", req.accessToken);
     return req.accessToken;
   } catch {
     try {
@@ -69,7 +68,6 @@ export const refreshAccessToken = async (req, res) => {
         secure: false,
         httpOnly: true,
       });
-      // console.log("userData", userData);
       return newAccessToken;
     } catch (error) {
       console.log("refreshToken was expired.");

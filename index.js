@@ -2,12 +2,14 @@ import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import dotenv from "dotenv";
 import { verifyToken, login, logout, register, updateusername, updatepassword, findmessage, } from "./controller/index.js";
-import travelkeyword from "./api/travelkeyword.js";
-import findLocation from "./api/findLocation.js";
+import { travelkeyword } from './controller/index.js';
+import { findLocation } from './controller/index.js';
 import { connectDB } from "./database/index.js";
 
 const app = express();
+dotenv.config();
 
 app.use(
   cors({

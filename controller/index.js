@@ -1,4 +1,7 @@
-import { addUser, getUserData, updateUsername, updatePassword, findMessage, } from "../database/index.js";
+import { searchPlace } from '../api/google/index.js';
+import { generate } from '../api/openai/index.js';
+import { detectLanguage, transelate } from '../api/papago/index.js';
+import { addUser, getUserData, updateUsername, updatePassword, findMessage, saveMessage, } from "../database/index.js";
 import { createAccessToken, createRefreshToken, isAccessTokenAlive, refreshAccessToken } from '../token/index.js';
 import jwt from "jsonwebtoken";
 
@@ -20,6 +23,8 @@ export const verifyToken = async (req, res) => {
       });
     } catch (error) {
       console.log("refreshToken was expired");
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
       res.status(500).json({
         error: "refreshToken was expired. Please log in again.",
       });
@@ -65,6 +70,7 @@ export const logout = (req, res) => {
   try {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
+    console.log("로그아웃 성공");
     res.status(200).json({ message: "로그아웃 되었습니다." });
   } catch (error) {
     console.log(error);
@@ -180,10 +186,12 @@ export const updatepassword = async (req, res) => {
   }
 };
 
+// 최근 생성된 답변을 가져오는 함수.
 export const findmessage = async (req, res) => {
   console.log("호출: findmessage");
   try {
-    const userData = jwt.verify(req.accessToken, process.env.ACCESS_SECRET);
+    const accessToken = await refreshAccessToken(req, res);
+    const userData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
     const message = await findMessage(userData.username, req.query.messageID);
     if (!message) {
       return res.status(404).json({ error: "메시지를 찾을 수 없습니다." });
@@ -195,3 +203,54 @@ export const findmessage = async (req, res) => {
     res.status(500).json({ error: "메시지 조회 중 오류가 발생했습니다." });
   }
 };
+
+// 장소를 검색해서 위도 경도를 반환하여 응답하는 함수
+export const findLocation = async (req, res) => {
+  try {
+    console.log("호출: findLocation");
+    const { query } = req.query;
+    // 장소 키워드를 영어로 번역하여 검색한다.
+    const from = await detectLanguage(query);
+    const placeEN = await transelate(query, from, "en");
+    const location = await searchPlace(placeEN);
+    console.log("place", query, "placeEN", placeEN);
+    res.send(location);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
+export const travelkeyword = async (req, res) => {
+  const accessToken = await refreshAccessToken(req, res);
+  const userdata = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+  const username = userdata.username;
+  const { dest = "", start = "", date = 1 } = req.body;
+
+  if (dest.trim().length === 0) {
+    res.status(400).json({
+      error: {
+        message: "Please enter a valid destination",
+      },
+    });
+    return;
+  }
+
+  // dest 와 start 의 언어코드를 파파고 언어감지 API 를 이용하여 반환
+  const [dLangCode, sLangCode] = [await detectLanguage(dest), await detectLanguage(start)];
+  // console.log("언어감지 완료: ", dLangCode, sLangCode);
+
+  // 언어코드를 넘겨서 dest 와 start 의 값을 영어로 바꿔준다.
+  const [destEN, startEN] = [await transelate(dest, dLangCode, 'en'), await transelate(start, sLangCode, 'en')];
+  // console.log("목적지 및 출발지_한글 -> 영문번역 완료: ", destEN, startEN, '\n');
+
+  // 영문 프롬포트를 생성해서 답변을 받아온다.
+  let answer = await generate(destEN, startEN, date);
+  console.log("gpt 답변생성(원문) 완료: ", answer, "\n");
+
+  // 받은 답변을 데이터베이스에 저장한다.
+  await saveMessage(username, answer);
+
+  // answerKO 를 클라이언트에게 전송한다.
+  await res.json({ result: answer });
+}
