@@ -1,5 +1,5 @@
 import { searchPlace } from '../api/google/index.js';
-import { generate } from '../api/openai/index.js';
+import { generate , generateTextLanguege} from '../api/openai/index.js';
 import { detectLanguage, transelate } from '../api/papago/index.js';
 import { addUser, getUserData, updateUsername, updatePassword, findMessage, saveMessage, } from "../database/index.js";
 import { createAccessToken, createRefreshToken, isAccessTokenAlive, refreshAccessToken } from '../token/index.js';
@@ -225,8 +225,10 @@ export const travelkeyword = async (req, res) => {
   const accessToken = await refreshAccessToken(req, res);
   const userdata = jwt.verify(accessToken, process.env.ACCESS_SECRET);
   const username = userdata.username;
-  const { dest = "", start = "", date = 1 } = req.body;
+  const { dest = "", start = "", date = 1 , langcode} = req.body;
 
+  const langText = generateTextLanguege(langcode)
+  console.log("langcode:", langcode, "langtext:", langText);
   if (dest.trim().length === 0) {
     res.status(400).json({
       error: {
@@ -245,7 +247,7 @@ export const travelkeyword = async (req, res) => {
   // console.log("목적지 및 출발지_한글 -> 영문번역 완료: ", destEN, startEN, '\n');
 
   // 영문 프롬포트를 생성해서 답변을 받아온다.
-  let answer = await generate(destEN, startEN, date);
+  let answer = await generate(destEN, startEN, date, langText);
   console.log("gpt 답변생성(원문) 완료: ", answer, "\n");
 
   // 받은 답변을 데이터베이스에 저장한다.

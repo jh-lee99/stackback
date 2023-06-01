@@ -10,7 +10,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 // gpt-3.5 모델을 통해 답변을 생성하는 함수
-export const generate = async (dest, start, date) => {
+export const generate = async (dest, start, date, langText) => {
   if (!configuration.apiKey) {
     const error = new Error('OpenAI API key not configured');
     error.name = 'OpenAI API key not configured';
@@ -85,6 +85,7 @@ I want a long and detailed explanation.`,
 
 또한, 여행 중에는 몇 가지 사항을 유념해야 합니다. 먼저, 한국은 사계절이 확실하게 나뉘어 있기 때문에, 계절에 따라 적절한 옷차림을 준비해야 합니다. 또한, 한국은 영어를 잘하는 사람이  많지 않기 때문에, 기본적인 한국어 회화를 준비하는 것이 좋습니다. 마지막으로, 한국의 문화와 관습을 존중하는 것도 중요합니다. 예를 들어, 사찰이나 절 등의 신성한 장소에는 신문지나 쓰레기를 버리지 않는 것이 예의에 맞는 것입니다.`,
         },
+        { role: "system", content: langText },
         { role: "user", content: prompt },
       ],
       temperature: 0.6,
@@ -120,4 +121,21 @@ If you have any recommended travel destinations near ${dest}, please recommend t
 And I wish there was an explanation of the background of the recommended travel destination.
 Also, please suggest other things to be aware of during your trip.
 I want a long and detailed explanation.`;
+}
+
+export function generateTextLanguege(langcode) {
+  switch (langcode) {
+    case "ko": {
+      return "한국어로 답변해줘"
+    }
+    case "en": {
+      return "answer in english"
+    }
+    case "ja": {
+      return "answer in japanese"
+    }
+    default: {
+      return "한국어로 답변해줘"
+    }
+  }
 }
